@@ -19,6 +19,9 @@ This Jupyter Notebook demonstrates and compares how various Python libraries ext
 - **Table Extraction (PyMuPDF4LLM):**
     - Saves extracted tables into a MD file.
 - **Table Extraction (Unstructured):**
+    - Free version has lower accuracy but is free and doesn't require an internet connection.
+    - Paid version has higher accuracy but requires a subscription and processes documents on remote servers over the internet.
+    - More information can be found [here](https://unstructured.io/blog).
     - Unstructured is available in both free and paid versions.
     - The paid version offers higher accuracy, but requires a subscription and processes documents on remote servers over the internet.
     - The free version can be used offline, but is less accurate compared to the paid version. 
@@ -30,10 +33,13 @@ Before running the script, ensure you have the following installed:
 1. **Python 3.x**
 2. **Required Python Libraries:**
     - `PyMuPDF`
-    - `camelot-py[cv]` (the `[cv]` part installs OpenCV dependencies needed by Camelot)
+    - `camelot-py`
     - `tabula-py`
     - `pandas`
     - `openpyxl` (for writing to Excel files)
+    - `pymupdf4llm`
+    - `unstructured`
+
 3. **External Dependencies:**
     - **Ghostscript:** Required by Camelot for processing PDFs. Make sure it's installed and added to your system's PATH.  
       [Camelot Ghostscript Installation Guide](https://camelot-py.readthedocs.io/en/master/user/install-deps.html#ghostscript)
@@ -44,3 +50,4 @@ Before running the script, ensure you have the following installed:
 - These libraries do not use OCR methods. To use them, the PDF must have extractable text (not just images of text).
 - In the tested pages, some tables are present only as images. These cannot be extracted as text or tables by these libraries.
 - Camelot generally gives good results but fails when the text is not extractable. There are also many false positives.
+![camelot_results](../resources/camelot_results.png)
