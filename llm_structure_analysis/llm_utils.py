@@ -2,7 +2,7 @@ import fitz  # PyMuPDF
 import base64
 
 # --- Configuration ---
-OLLAMA_MULTIMODAL_MODEL = 'gemma3:4b'  # Or your preferred Ollama multimodal model
+OLLAMA_MULTIMODAL_MODEL = 'gemma3:4b'
 OLLAMA_HOST = 'http://localhost:11434'
 
 # --- Helper Functions ---

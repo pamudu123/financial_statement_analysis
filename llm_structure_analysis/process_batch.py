@@ -58,25 +58,94 @@ Exclude:
 Focus on whether the page primarily presents financial information in a structured, row-and-column format with numerical data. Consider the presence of headers, clear financial line items, and the overall organization of data. Even if a full table extends beyond one page, each page that contains a discernible part of that financial data table (with headers or a clear continuation of the structure) should be identified as "YES". Pages with direct links or references to such tables should also be considered in context.
 </Instructions>
 
-<Examples_Provided_By_User>
-The user has provided an example showing a "STATEMENT OF PROFIT OR LOSS AND OTHER COMPREHENSIVE INCOME" which is a financial table. The prompt should recognize pages containing such structured financial statements (even if they might refer to notes elsewhere).
-User also provided examples of:
-- A "STATEMENT OF CASH FLOWS" showing items like "Receipts from customers", "Payments to suppliers", "Interest paid" with corresponding dollar amounts for two years (e.g., 2023 $, 2022 $).
-- A "NOTES TO THE CONSOLIDATED FINANCIAL STATEMENTS" section, for example, detailing "Movement in temporary differences" under "INCOME TAX", showing items like "Opening balance", "Adjustments", "Recognised in income", "Closing balance" with dollar amounts ($Million) for two years.
-- A "RELATED PARTY TRANSACTIONS" note showing tabular data for items like "Management fee from immediate parent entity", "Information system services", "Disposal of non-current asset" and a separate table for "Loan/payables to related parties" with corresponding dollar amounts for two years.
-</Examples_Provided_By_User>
+<Examples>
 
-<General_Examples_Format_Focus>
-    <Examples1 - Page with a financial statement table (P&L, Balance Sheet, etc.)>
-    Output:
-    [{{"page_number": "X", "has_table": "YES"}}]
-    </Examples1>
+    <Example1>
+    Assume num_images_in_batch = 2
+    Assume actual_page_numbers_string = "2, 11"
 
-    <Examples2 - Page with only text or non-financial content>
-    Output:
-    [{{"page_number": "Y", "has_table": "NO"}}]
-    </Examples2>
-</General_Examples_Format_Focus>
+    Input Image 1 Content (Actual Page 2):
+    **Statement of Profit or Loss and Other Comprehensive Income**
+    For the Year Ended ...
+                            Note     2024 $       2023 $
+    Revenue                   3   38,403,987   35,363,211
+    Other income              4      383,018      314,453
+    ... (table continues) ...
+
+    Input Image 2 Content (Actual Page 11):
+    **Chairman's Report**
+    The 2024 financial year presented a dynamic environment for our operations. We navigated fluctuating market conditions and inflationary pressures... (continues with paragraphs of text).
+
+    Expected Output for this batch:
+    [
+      {{"page_number": "2", "has_table": "YES"}},
+      {{"page_number": "11", "has_table": "NO"}}
+    ]
+    </Example1>
+
+    <Example2>
+    Assume num_images_in_batch = 2
+    Assume actual_page_numbers_string = "6, 15"
+
+    Input Image 1 Content (Actual Page 6 - Continuation of a larger table, headers on a previous page):
+    (Amounts in $ thousands)
+    Consultancy fees                                  85.6       75.3
+    Legal and professional fees                      120.2      110.9
+    Marketing and advertising                         95.0       90.1
+    ... (table continues with clear columnar data) ...
+
+    Input Image 2 Content (Actual Page 15 - A note with a clear financial data table):
+    **Note 12: Related Party Transactions**
+    Transactions between related parties are on normal commercial terms and conditions no more favourable than those available to other parties unless otherwise stated.
+    The following transactions occurred with related parties:
+                                            2024 ($)     2023 ($)
+    Sales of goods to associate A           150,000      120,000
+    Management fees from parent entity       50,000       45,000
+    Purchases from entity B                  75,000       60,000
+
+    Expected Output for this batch:
+    [
+      {{"page_number": "6", "has_table": "YES"}},
+      {{"page_number": "15", "has_table": "YES"}}
+    ]
+    </Example2>
+
+    <Example3>
+    Assume num_images_in_batch = 3
+    Assume actual_page_numbers_string = "3, 7, 8"
+
+    Input Image 1 Content (Actual Page 3 - Table of Contents):
+    **Contents**
+    Directors' Report ....................................... 1
+    Auditor's Independence Declaration ...................... 3
+    Financial Statements .................................... 4
+    Statement of Profit or Loss ............................. 5
+
+    Input Image 2 Content (Actual Page 7 - Detailed financial table):
+    **Notes to the Consolidated Financial Statements**
+    **Note 5. Income Tax**
+    (a) Income tax expense
+                                            Group
+                                        2024 $'000   2023 $'000
+    Current tax expense                  1,200        1,100
+    Deferred tax expense related to
+      origination and reversal of
+      temporary differences                (50)          75
+    Total income tax expense             1,150        1,175
+
+    Input Image 3 Content (Actual Page 8 - Text-heavy page with no primary table):
+    **Auditor's Opinion**
+    In our opinion, the accompanying financial report gives a true and fair view of the financial position of the Company as at 31 December 2024... (continues with audit opinion text).
+
+    Expected Output for this batch:
+    [
+      {{"page_number": "3", "has_table": "NO"}},
+      {{"page_number": "7", "has_table": "YES"}},
+      {{"page_number": "8", "has_table": "NO"}}
+    ]
+    </Example3>
+
+</Examples>
 
 ---
 Now, for the current batch of images you have received:
@@ -84,7 +153,7 @@ Now, for the current batch of images you have received:
 Your response MUST be a valid JSON array where each element is an object.
 Each object in the array must correspond to one of the provided page images in this current batch.
 Each object must have two keys:
-1. "page_number": The actual page number from the PDF document (this must be one of the numbers from the list: {actual_page_numbers_string} that you were given for this batch).
+1. "page_number": The actual page number from the PDF document (this must be one of the numbers from the list: {actual_page_numbers_string} that you were given for this batch). Ensure this is a string in the output if the input {actual_page_numbers_string} implies string page numbers, or an integer if they are integers. The examples use strings.
 2. "has_table": A string value, either "YES" if a financial data table (considering multi-page and linked notes aspects) is the primary content of the page, or "NO" if not.
 The number of items in the JSON array must match the number of images you received in this batch.
 
