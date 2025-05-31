@@ -65,23 +65,23 @@ The following images illustrate the output at different stages of the layout ana
 
 **Stage 1: Initial OCR Polygons**
 *(Shows the raw text boxes detected by PaddleOCR)*
-![Stage 1: Initial OCR Polygons](outputs/01_initial_polygons.jpg)
+![Stage 1: Initial OCR Polygons](outputs/01_initial_polygons.png)
 
 **Stage 2: Identified Columns**
 *(Highlights the detected vertical columns with colored overlays. The example shows columns for Description, Note, Year 1, Year 2)*
-![Stage 2: Identified Columns](outputs/02_identified_columns.jpg)
+![Stage 2: Identified Columns](outputs/02_identified_columns.png)
 
 **Stage 3: Spanning Rows**
 *(Shows rows that have been identified as spanning across multiple columns, such as main section headers)*
-![Stage 3: Spanning Rows](outputs/03_spanning_rows.jpg)
+![Stage 3: Spanning Rows](outputs/03_spanning_rows.png)
 
 **Stage 4: Full Column-Width Rows**
 *(Shows rows that are contained within single columns, with their horizontal extent adjusted to the full width of their respective columns)*
-![Stage 4: Full Column-Width Rows](outputs/04_full_column_rows.jpg)
+![Stage 4: Full Column-Width Rows](outputs/04_full_column_rows.png)
 
 **Stage 5: Combined Layout**
 *(Presents a consolidated view with column overlays, spanning rows, and full-width in-column rows, giving a comprehensive picture of the analyzed layout)*
-![Stage 5: Combined Layout](outputs/05_combined_layout.jpg)
+![Stage 5: Combined Layout](outputs/05_combined_layout.png)
 
 ## 5. Setup & Usage
 
