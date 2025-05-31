@@ -1,17 +1,11 @@
-# common_utils.py
 import fitz  # PyMuPDF
 import base64
-import os
-import json # For parsing LLM's structured response (though primarily used in main scripts)
-import ollama
 
 # --- Configuration ---
 OLLAMA_MULTIMODAL_MODEL = 'gemma3:4b'  # Or your preferred Ollama multimodal model
 OLLAMA_HOST = 'http://localhost:11434'
-# Consider adding DEFAULT_IMAGE_DPI if it's often the same
 
 # --- Helper Functions ---
-
 def convert_pdf_page_to_image_base64(pdf_doc, page_number_internal, dpi=150):
     """
     Converts a single PDF page to a base64 encoded image string using PyMuPDF.
