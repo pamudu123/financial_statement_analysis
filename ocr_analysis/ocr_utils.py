@@ -236,8 +236,7 @@ if __name__ == '__main__':
     # --- Configuration for testing ---
     # 1. Specify the path to your image
     #    Replace with your image path.
-    #    A dummy image will be created if this path doesn't exist for basic testing.
-    test_image_path = "test_ocr_image.png" 
+    test_image_path = "docs/page11.jpg"
 
     # 2. Specify the language for OCR
     language_code = 'en' # English
@@ -263,8 +262,8 @@ if __name__ == '__main__':
         if ocr_results and ocr_results["image_annotated"]:
             annotated_image_pil = ocr_results["image_annotated"]
             
-            # To display the image (might open in an external viewer)
-            # annotated_image_pil.show() # Uncomment to display
+            # To display the image
+            annotated_image_pil.show()
 
             # To save the annotated image
             output_filename = f"output_ocr_annotated_{os.path.basename(test_image_path)}"

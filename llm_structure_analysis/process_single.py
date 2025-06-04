@@ -18,7 +18,6 @@ class ResultKeys(Enum):
     VALUES = "values"
     IS_SUBTOTAL = "is_subtotal"
     IS_TOTAL = "is_total"
-    INDENTATION_LEVEL = "indentation_level"
 
 from llm_utils import (
     OLLAMA_MULTIMODAL_MODEL,
@@ -194,7 +193,6 @@ Carefully identify the following components from the primary data table:
     * **"{ResultKeys.VALUES.value}"**: A dictionary where keys are the exact strings from your identified `{ResultKeys.COLUMN_HEADERS.value}` list, and values are the corresponding string values from the table cells for that line item. All numerical values should be presented as strings, preserving formatting like parentheses for negatives (e.g., "(25,123,456)"). If a cell is blank or not applicable for a header for that row, use an empty string "" or null for its value.
     * **"{ResultKeys.IS_SUBTOTAL.value}"**: Boolean (true/false). True if the line item primarily represents a subtotal of preceding items.
     * **"{ResultKeys.IS_TOTAL.value}"**: Boolean (true/false). True if the line item primarily represents a grand total or a major section total.
-    * **"{ResultKeys.INDENTATION_LEVEL.value}"**: Integer (0, 1, 2, ...). Represents the perceived indentation level of the description, indicating hierarchy if present. 0 for no indent or baseline.
 </Instructions>
 
 <InputTextFromPage>
@@ -262,16 +260,14 @@ Expected JSON Snippet (Illustrative - assuming this is the primary table chosen)
       "{ResultKeys.NOTE_REFERENCE.value}": "",
       "{ResultKeys.VALUES.value}": {{"Revenue ($M)": "150.5", "Profit ($M)": "15.2"}},
       "{ResultKeys.IS_SUBTOTAL.value}": false,
-      "{ResultKeys.IS_TOTAL.value}": false,
-      "{ResultKeys.INDENTATION_LEVEL.value}": 0
+      "{ResultKeys.IS_TOTAL.value}": false
     }},
     {{
       "{ResultKeys.DESCRIPTION.value}": "Year 2023",
       "{ResultKeys.NOTE_REFERENCE.value}": "",
       "{ResultKeys.VALUES.value}": {{"Revenue ($M)": "140.2", "Profit ($M)": "12.8"}},
       "{ResultKeys.IS_SUBTOTAL.value}": false,
-      "{ResultKeys.IS_TOTAL.value}": false,
-      "{ResultKeys.INDENTATION_LEVEL.value}": 0
+      "{ResultKeys.IS_TOTAL.value}": false
     }}
   ]
   // ... other keys like page_number, reporting_period_info would be filled
@@ -297,24 +293,21 @@ Expected JSON Snippet:
       "{ResultKeys.NOTE_REFERENCE.value}": "",
       "{ResultKeys.VALUES.value}": {{"Description": "Trade receivables", "2024 ($'000)": "350", "2023 ($'000)": "280"}}, // Description might be repeated if it's a value under the implicit header. Or the header list could just be the year columns.
       "{ResultKeys.IS_SUBTOTAL.value}": false,
-      "{ResultKeys.IS_TOTAL.value}": false,
-      "{ResultKeys.INDENTATION_LEVEL.value}": 0
+      "{ResultKeys.IS_TOTAL.value}": false
     }},
     {{
       "{ResultKeys.DESCRIPTION.value}": "Less: Provision for doubtful debts",
       "{ResultKeys.NOTE_REFERENCE.value}": "",
       "{ResultKeys.VALUES.value}": {{"Description": "Less: Provision for doubtful debts", "2024 ($'000)": "(15)", "2023 ($'000)": "(10)"}},
       "{ResultKeys.IS_SUBTOTAL.value}": false,
-      "{ResultKeys.IS_TOTAL.value}": false,
-      "{ResultKeys.INDENTATION_LEVEL.value}": 0
+      "{ResultKeys.IS_TOTAL.value}": false
     }},
     {{
       "{ResultKeys.DESCRIPTION.value}": "Net trade receivables",
       "{ResultKeys.NOTE_REFERENCE.value}": "",
       "{ResultKeys.VALUES.value}": {{"Description": "Net trade receivables", "2024 ($'000)": "335", "2023 ($'000)": "270"}},
       "{ResultKeys.IS_SUBTOTAL.value}": true, // This acts as a subtotal
-      "{ResultKeys.IS_TOTAL.value}": false,
-      "{ResultKeys.INDENTATION_LEVEL.value}": 0
+      "{ResultKeys.IS_TOTAL.value}": false
     }}
   ]
   // ... other keys like page_number would be filled
@@ -393,7 +386,7 @@ def detect_and_extract_tables_sequentially(pdf_path,
             page_num_internal = current_page_index
             page_num_display = current_page_index + 1
 
-            print(f"\nProcessing Page {page_num_display} of {pages_to_process_count}...")
+            print(f"Processing Page {page_num_display} of {pages_to_process_count}...")
             img_base64 = convert_pdf_page_to_image_base64(doc, page_num_internal, dpi=image_dpi)
 
             if not img_base64:
@@ -440,7 +433,8 @@ if __name__ == "__main__":
     # For testing, process only a few pages, e.g., the first 5. Set to None to process all.
     TOTAL_PAGES_TO_PROCESS = 5 
     IMAGE_CONVERSION_DPI = 300
-
+    PDF_DIR = "../output"  # Directory to save output JSON, if needed
+    os.makedirs(PDF_DIR, exist_ok=True)
 
     results = detect_and_extract_tables_sequentially(
         pdf_path=PDF_FILE_PATH,
@@ -466,13 +460,13 @@ if __name__ == "__main__":
                 # Pretty print the JSON for readability
                 print(json.dumps(result_data, indent=2))
         else:
-            print(f"  Unexpected result type: {type(result_data)}")
+            print(f"Unexpected result type: {type(result_data)}")
 
     # Example: Save results to a JSON file
     output_json_path = os.path.join(pdf_dir if pdf_dir else ".", "extraction_results.json")
     try:
         with open(output_json_path, "w") as f:
             json.dump(results, f, indent=2)
-        print(f"\nFull results saved to: {output_json_path}")
+        print(f"Full results saved to: {output_json_path}")
     except Exception as e:
         print(f"Error saving results to JSON: {e}")

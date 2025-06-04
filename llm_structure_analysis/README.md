@@ -14,6 +14,18 @@ This automates a typically manual and time-consuming data entry and analysis pro
 
 The script processes a PDF document sequentially, page by page:
 
+0. **Initial Stage**
+- Identify Requirements
+-- Model Selection  
+Gemma3 is used for this experiment because it is `open source`, `suitable for commercial applications`, and `can be fine-tuned for specific use cases` using LoRA techniques. It is `available in different parameter sizes` and `can be deployed on a single GPU`.
+
+## Example Workflow Diagram
+
+![Workflow Diagram](../resources/llm_method.png)
+
+*Figure: High-level workflow for financial table detection and extraction from PDFs using local LLMs with Ollama.*
+
+
 1.  **PDF Input & Page Iteration**:
     * The script takes a path to a PDF file as input.
     * It iterates through each page of the PDF (or a specified number of pages).
@@ -104,3 +116,37 @@ Ollama allows you to run powerful open-source LLMs locally on your machine.
     * This JSON file provides a structured record of the entire processing run. Pages with successfully extracted tables will have their data nested as a JSON object. Other pages will show their detection status (e.g., "NO" for no table, or an error code).
 
 This setup and workflow should enable you to start processing your PDF documents for financial table information. Remember that the quality of extraction heavily depends on the LLM's capabilities and the clarity of the prompts.
+
+
+**Considerations to Select a Model for Deployment**
+1.  **Model Size:** Larger models (more parameters) need more memory just to be loaded.
+2.  **Input Tokens:** The length of your input text. More tokens = more memory.
+3.  **Output Tokens:** The length of the generated text. More tokens = more memory.
+
+---
+#### Example Memory Calculation 📝
+
+Let's say you have a GPU with **24 GB of VRAM**.
+
+1.  **Model Loading:**
+    * You choose a **7 Billion parameter model**.
+    * If using 16-bit precision (bfloat16), each parameter takes 2 bytes.
+    * Memory for model weights = $7 \text{ billion parameters} \times 2 \text{ bytes/parameter} = 14 \text{ GB}$.
+
+2.  **Remaining Memory for Processing:**
+    * $24 \text{ GB (Total VRAM)} - 14 \text{ GB (Model Weights)} = 10 \text{ GB}$ available for inputs, outputs, and activations.
+
+3.  **Input/Activation Memory (Simplified):**
+    * Let's estimate that for your chosen model and a reasonable input length (e.g., a few pages, say 2000 tokens), the combined memory for input token embeddings and activation caches might be around **4-6 GB**.
+
+4.  **Output Token Memory:**
+    * If you're generating a moderate output (e.g., 500 tokens), this might take an additional **0.5 - 1 GB** (varies).
+
+5.  **Total Estimated Usage:**
+    * Model: 14 GB
+    * Input/Activations: ~5 GB
+    * Output: ~0.5 GB
+    * **Total: ~19.5 GB**
+
+**Conclusion for this example:**
+With ~19.5 GB used, you'd have roughly 4.5 GB of VRAM spare on your 24 GB card. This setup could handle the input of a few pages. If you needed to process many more pages at once (longer input tokens), you would exceed the 10 GB available after loading the model, requiring either a smaller model, quantization, or processing the document in smaller chunks.

@@ -15,14 +15,12 @@ def main():
     print("Starting Document Layout Analysis Pipeline...")
 
     # --- Configuration ---
-    image_file_path = "pages/page11.jpg"
-    
+    image_file_path = "docs/page11.jpg"
     ocr_language = 'en'
-
     font_for_drawing = None 
 
     # Directory to save the output visualization images
-    output_visualization_dir = "document_layout_output_stages"
+    output_visualization_dir = "output/document_layouts"
     if not os.path.exists(output_visualization_dir):
         os.makedirs(output_visualization_dir)
         print(f"Created output directory: {output_visualization_dir}")

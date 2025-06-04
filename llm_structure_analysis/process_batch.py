@@ -339,10 +339,10 @@ def detect_tables_in_pdf_page_batches(pdf_path, pages_per_llm_call,
     return table_detection_results
 
 if __name__ == "__main__":
-    PDF_FILE_PATH = "docs/YHI PTY LTD.pdf"  # Replace with your PDF file path
-    TOTAL_PAGES_TO_PROCESS = None # Process all pages
-    PAGES_PER_LLM_CALL = 2 # Number of pages to process in one LLM call
-    IMAGE_CONVERSION_DPI = 150 # Lower DPI for potentially faster processing and smaller payload
+    PDF_FILE_PATH = "docs/YHIPTYLTD.pdf"
+    TOTAL_PAGES_TO_PROCESS = None       # Process all pages
+    PAGES_PER_LLM_CALL = 2              # Number of pages to process in one LLM call
+    IMAGE_CONVERSION_DPI = 150          # Lower DPI for potentially faster processing and smaller payload
 
     if not os.path.exists(PDF_FILE_PATH):
         print(f"FATAL ERROR: PDF file does not exist at '{PDF_FILE_PATH}'. Please check the path.")
@@ -355,8 +355,8 @@ if __name__ == "__main__":
         results = detect_tables_in_pdf_page_batches(
             pdf_path=PDF_FILE_PATH,
             pages_per_llm_call=PAGES_PER_LLM_CALL,
-            model_name_param=OLLAMA_MULTIMODAL_MODEL, # from common_utils
-            ollama_host_param=OLLAMA_HOST,           # from common_utils
+            model_name_param=OLLAMA_MULTIMODAL_MODEL, # from llm_utils
+            ollama_host_param=OLLAMA_HOST,            # from llm_utils
             image_dpi=IMAGE_CONVERSION_DPI,
             total_pages_to_process_param=TOTAL_PAGES_TO_PROCESS
         )
